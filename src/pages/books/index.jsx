@@ -1,23 +1,46 @@
-// src/pages/books/index.jsx
+// src/pages/book-store/index.jsx
 import { connect } from 'react-redux';
 import { useState } from 'react';
 import Meta from '../../components/Meta';
 import BookForm from '../../components/BookForm';
+import ReaderForm from '../../components/ReaderForm';
+import LendForm from '../../components/LendForm';
 import BooksList from '../../components/BooksList';
+import ReadersList from '../../components/ReadersList';
 
-function BooksPage({ booksList }) {
+function BooksPage({ books, readers }) {
   const [editingBook, setEditingBook] = useState(null);
 
   return (
     <>
-      <Meta title="Books" />
-      <div className="container max-w-3xl prose">
-        <h3>Добавить книгу</h3>
-        <BookForm editingBook={editingBook} setEditingBook={setEditingBook} />
-        {booksList.length !== 0 && (
+      <Meta title="BookStore" />
+      <div className="container max-w-5xl prose">
+        <div className="flex gap-8">
+          <div>
+            <h3>Добавить книгу</h3>
+            <BookForm editingBook={editingBook} setEditingBook={setEditingBook} />
+          </div>
+          <div>
+            <h3>Добавить читателя</h3>
+            <ReaderForm />
+          </div>
+          <div>
+            <h3>Выдать книгу</h3>
+            <LendForm />
+          </div>
+        </div>
+
+        {books.length !== 0 && (
           <>
             <h3>Список книг</h3>
             <BooksList onEdit={setEditingBook} />
+          </>
+        )}
+
+        {readers.length !== 0 && (
+          <>
+            <h3>Список читателей</h3>
+            <ReadersList />
           </>
         )}
       </div>
@@ -26,7 +49,8 @@ function BooksPage({ booksList }) {
 }
 
 const mapStateToProps = (state) => ({
-  booksList: state.books.booksList,
+  books: state.bookStore.books,
+  readers: state.bookStore.readers,
 });
 
 export default connect(mapStateToProps, null)(BooksPage);

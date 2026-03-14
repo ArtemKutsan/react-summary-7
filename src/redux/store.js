@@ -1,8 +1,8 @@
 import { createStore, combineReducers } from 'redux';
-import booksReducer from './reducers/books';
+import bookStoreReducer from './reducers/bookStore';
 
 const rootReducer = combineReducers({
-  books: booksReducer,
+  bookStore: bookStoreReducer,
 });
 
 const store = createStore(rootReducer);

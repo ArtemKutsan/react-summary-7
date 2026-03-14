@@ -1,7 +1,7 @@
-// src/components/BookForm/index.jsx
+// src/components/BookForm.jsx
 import { useForm } from 'react-hook-form';
 import { connect } from 'react-redux';
-import { addBookAction, updateBookAction } from '../redux/actions/books';
+import { addBookAction, updateBookAction } from '../redux/actions/bookStore';
 import { useEffect } from 'react';
 
 function BookForm({ editingBook, addBook, updateBook, setEditingBook }) {

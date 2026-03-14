@@ -6,7 +6,7 @@ import Nav from '../Nav';
 function Header() {
   return (
     <header className="bg-slate-900 py-6 sticky top-0 z-50 text-slate-100">
-      <div className="container flex justify-between items-center">
+      <div className="container max-w-5xl flex justify-between items-center">
         <Link to="/" className="text-lg font-bold">
           React
         </Link>

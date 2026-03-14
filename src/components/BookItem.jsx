@@ -1,6 +1,6 @@
-// src/components/BookItem/index.jsx
+// src/components/BookItem.jsx
 import { connect } from 'react-redux';
-import { removeBookAction } from '../redux/actions/books';
+import { removeBookAction } from '../redux/actions/bookStore';
 
 function BookItem({ book, removeBook, onEdit }) {
   return (
@@ -8,7 +8,8 @@ function BookItem({ book, removeBook, onEdit }) {
       <span>{book.title},</span>
       <span>{book.author},</span>
       <span>{book.year},</span>
-      <span>{book.isAvailable ? 'Есть в наличии' : 'Нет в наличии'}</span>
+      <span>{book.isAvailable ? 'Есть в наличии' : 'Нет в наличии'}, </span>
+      <span>{book.id}</span>
 
       <div className="flex gap-2 ml-auto text-sm">
         <button className="button-secondary" onClick={() => onEdit(book)}>
