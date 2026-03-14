@@ -34,6 +34,7 @@ const initialState = {
       isAvailable: false,
     },
   ],
+  lastUpdated: null,
   // Task 2
   readers: [
     {
@@ -43,7 +44,24 @@ const initialState = {
       borrowedBooks: [],
     },
   ],
-  lastUpdated: null,
+  // Task 3
+  statistics: {
+    totalBooks: 0, // всего книг
+    availableBooks: 0, // доступно сейчас
+    borrowedBooks: 0, // выдано всего
+    booksByDecade: {
+      1950: 0,
+      1960: 0,
+      1970: 0,
+      // и т.д.
+    },
+    activeReadersCount: 0, // читатели с книгами на руках
+    mostPopularAuthor: {
+      // Cамый популярный автор
+      name: '',
+      booksCount: 0,
+    },
+  },
 };
 
 const bookStoreReducer = (state = initialState, action) => {
