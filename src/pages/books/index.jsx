@@ -16,20 +16,20 @@ function BooksPage({ books, readers }) {
     <>
       <Meta title="BookStore" />
       <div className="container max-w-5xl prose">
-        <div className="flex gap-8">
-          <div>
+        <div className="flex flex-wrap gap-8">
+          <div className="flex-1">
             <h3>Добавить книгу</h3>
             <BookForm editingBook={editingBook} setEditingBook={setEditingBook} />
           </div>
-          <div>
+          <div className="flex-1">
             <h3>Добавить читателя</h3>
             <ReaderForm />
           </div>
-          <div>
+          <div className="flex-1">
             <h3>Выдать книгу</h3>
             <LendForm />
           </div>
-          <div>
+          <div className="flex-1">
             <h3>Вернуть книгу</h3>
             <ReturnForm />
           </div>

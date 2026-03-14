@@ -38,7 +38,7 @@
 
   input[type='text'],
   textarea {
-    @apply min-h-8 text-sm border border-slate-300 px-3 py-1 placeholder:text-slate-400 rounded-md outline-none w-full bg-slate-100 focus:border-blue-500;
+    @apply min-h-8 min-w-[216px] max-w-[256px] w-full text-sm border border-slate-300 px-3 py-1 placeholder:text-slate-400 rounded-md outline-none bg-slate-100 focus:border-blue-500;
     font-family: inherit;
   }
 
