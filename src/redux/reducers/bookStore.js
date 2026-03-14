@@ -7,6 +7,7 @@ import {
   READER_ADD,
   READER_REMOVE,
   BOOK_LEND_TO_READER,
+  BOOK_RETURN_FROM_READER,
 } from '../actions/bookStore';
 
 const initialState = {
@@ -129,6 +130,34 @@ const bookStoreReducer = (state = initialState, action) => {
               }
             : reader,
         ),
+        lastUpdated: new Date().toISOString(),
+      };
+    }
+
+    case BOOK_RETURN_FROM_READER: {
+      const { bookId, readerId } = action.payload;
+
+      const readerReturningBook = state.readers.find((reader) => reader.id === readerId);
+
+      if (!readerReturningBook || !readerReturningBook.borrowedBooks.includes(bookId)) {
+        return state;
+      }
+
+      return {
+        ...state,
+        books: state.books.map((book) =>
+          book.id === bookId ? { ...book, isAvailable: true } : book,
+        ),
+
+        readers: state.readers.map((reader) =>
+          reader.id === readerId
+            ? {
+                ...reader,
+                borrowedBooks: reader.borrowedBooks.filter((id) => id !== bookId),
+              }
+            : reader,
+        ),
+
         lastUpdated: new Date().toISOString(),
       };
     }
