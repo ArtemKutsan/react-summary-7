@@ -8,6 +8,7 @@ export const BOOK_TOGGLE_AVAILABILITY = 'BOOK_TOGGLE_AVAILABILITY';
 export const READER_ADD = 'READER_ADD';
 export const READER_REMOVE = 'READER_REMOVE';
 export const BOOK_LEND_TO_READER = 'BOOK_LEND_TO_READER';
+export const BOOK_RETURN_FROM_READER = 'BOOK_RETURN_FROM_READER';
 
 export const addBookAction = (bookData) => ({
   type: BOOK_ADD,
@@ -46,5 +47,10 @@ export const removeReaderAction = (readerId) => ({
 
 export const lendBookAction = (bookId, readerId) => ({
   type: BOOK_LEND_TO_READER,
+  payload: { bookId, readerId },
+});
+
+export const returnBookAction = (bookId, readerId) => ({
+  type: BOOK_RETURN_FROM_READER,
   payload: { bookId, readerId },
 });
