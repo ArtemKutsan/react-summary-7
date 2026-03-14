@@ -1,11 +1,11 @@
-// src/components/BooksList/index.jsx
+// src/components/BooksList.jsx
 import { connect } from 'react-redux';
 import BookItem from './BookItem';
 
-function BooksList({ booksList, onEdit }) {
+function BooksList({ books, onEdit }) {
   return (
     <div className="flex flex-col gap-4">
-      {booksList.map((book) => (
+      {books.map((book) => (
         <BookItem key={book.id} book={book} onEdit={onEdit} />
       ))}
     </div>
@@ -13,7 +13,7 @@ function BooksList({ booksList, onEdit }) {
 }
 
 const mapStateToProps = (state) => ({
-  booksList: state.books.booksList,
+  books: state.bookStore.books,
 });
 
 export default connect(mapStateToProps, null)(BooksList);

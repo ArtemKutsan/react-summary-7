@@ -1,4 +1,4 @@
-// src/components/Nav/index.jsx
+// src/components/Nav.jsx
 import { NavLink } from 'react-router-dom';
 
 const navLinks = [
