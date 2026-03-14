@@ -5,6 +5,7 @@ import Meta from '../../components/Meta';
 import BookForm from '../../components/BookForm';
 import ReaderForm from '../../components/ReaderForm';
 import LendForm from '../../components/LendForm';
+import ReturnForm from '../../components/ReturnForm';
 import BooksList from '../../components/BooksList';
 import ReadersList from '../../components/ReadersList';
 
@@ -27,6 +28,10 @@ function BooksPage({ books, readers }) {
           <div>
             <h3>Выдать книгу</h3>
             <LendForm />
+          </div>
+          <div>
+            <h3>Вернуть книгу</h3>
+            <ReturnForm />
           </div>
         </div>
 
