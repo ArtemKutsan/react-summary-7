@@ -28,3 +28,9 @@ src/components/Template/
 
 # Временная папка
 temp
+
+# Детали проектта и реализации
+docs
+tools
+playbooks
+AGENTS.md
