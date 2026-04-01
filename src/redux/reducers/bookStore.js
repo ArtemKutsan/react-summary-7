@@ -10,6 +10,60 @@ import {
   BOOK_RETURN_FROM_READER,
 } from '../actions/bookStore';
 
+function calculateStatistics(books, readers) {
+  const totalBooks = books.length;
+  const availableBooks = books.filter((book) => book.isAvailable).length;
+  const borrowedBooks = books.filter((book) => !book.isAvailable).length;
+
+  const booksByDecade = books.reduce((acc, book) => {
+    const decade = Math.floor(book.year / 10) * 10;
+    acc[decade] = (acc[decade] || 0) + 1;
+    return acc;
+  }, {});
+
+  const activeReadersCount = readers.filter((reader) => reader.borrowedBooks.length > 0).length;
+
+  const authorCounts = books.reduce((acc, book) => {
+    acc[book.author] = (acc[book.author] || 0) + 1;
+    return acc;
+  }, {});
+
+  let mostPopularAuthor = { name: '', booksCount: 0 };
+  for (const [author, count] of Object.entries(authorCounts)) {
+    if (count > mostPopularAuthor.booksCount) {
+      mostPopularAuthor = { name: author, booksCount: count };
+    }
+  }
+
+  const totalBorrowedInReaders = readers.reduce(
+    (sum, reader) => sum + reader.borrowedBooks.length,
+    0,
+  );
+
+  const consistencyCheck =
+    availableBooks + borrowedBooks === totalBooks && totalBorrowedInReaders === borrowedBooks;
+
+  if (!consistencyCheck) {
+    console.warn('Statistics consistency check failed!', {
+      totalBooks,
+      availableBooks,
+      borrowedBooks,
+      sum: availableBooks + borrowedBooks,
+      totalBorrowedInReaders,
+    });
+  }
+
+  return {
+    totalBooks,
+    availableBooks,
+    borrowedBooks,
+    booksByDecade,
+    activeReadersCount,
+    mostPopularAuthor,
+    consistencyCheck,
+  };
+}
+
 const initialState = {
   books: [
     {
@@ -31,7 +85,7 @@ const initialState = {
       title: 'Атлант расправил плечи',
       author: 'Айн Рэнд',
       year: '1957',
-      isAvailable: false,
+      isAvailable: true,
     },
   ],
   lastUpdated: null,
@@ -46,21 +100,13 @@ const initialState = {
   ],
   // Task 3
   statistics: {
-    totalBooks: 0, // всего книг
-    availableBooks: 0, // доступно сейчас
-    borrowedBooks: 0, // выдано всего
-    booksByDecade: {
-      1950: 0,
-      1960: 0,
-      1970: 0,
-      // и т.д.
-    },
-    activeReadersCount: 0, // читатели с книгами на руках
-    mostPopularAuthor: {
-      // Cамый популярный автор
-      name: '',
-      booksCount: 0,
-    },
+    totalBooks: 3,
+    availableBooks: 3,
+    borrowedBooks: 0,
+    booksByDecade: { 1940: 1, 1950: 2 },
+    activeReadersCount: 0,
+    mostPopularAuthor: { name: 'Джордж Оруэлл', booksCount: 1 },
+    consistencyCheck: true,
   },
 };
 
@@ -71,37 +117,44 @@ const bookStoreReducer = (state = initialState, action) => {
         ...state,
         books: [...state.books, action.payload],
         lastUpdated: new Date().toISOString(),
+        statistics: calculateStatistics([...state.books, action.payload], state.readers),
       };
 
     case BOOK_REMOVE: {
+      const newBooks = state.books.filter((book) => book.id !== action.payload.bookId);
       return {
         ...state,
-        books: state.books.filter((book) => book.id !== action.payload.bookId),
+        books: newBooks,
         lastUpdated: new Date().toISOString(),
+        statistics: calculateStatistics(newBooks, state.readers),
       };
     }
 
     case BOOK_UPDATE_INFO:
+      const updatedBooks = state.books.map((book) =>
+        book.id === action.payload.id
+          ? {
+              ...book,
+              ...action.payload,
+            }
+          : book,
+      );
       return {
         ...state,
-        books: state.books.map((book) =>
-          book.id === action.payload.id
-            ? {
-                ...book,
-                ...action.payload,
-              }
-            : book,
-        ),
+        books: updatedBooks,
         lastUpdated: new Date().toISOString(),
+        statistics: calculateStatistics(updatedBooks, state.readers),
       };
 
     case BOOK_TOGGLE_AVAILABILITY:
+      const toggledBooks = state.books.map((book) =>
+        book.id === action.payload.bookId ? { ...book, isAvailable: !book.isAvailable } : book,
+      );
       return {
         ...state,
-        books: state.books.map((book) =>
-          book.id === action.payload.bookId ? { ...book, isAvailable: !book.isAvailable } : book,
-        ),
+        books: toggledBooks,
         lastUpdated: new Date().toISOString(),
+        statistics: calculateStatistics(toggledBooks, state.readers),
       };
 
     // Task 2
@@ -110,6 +163,7 @@ const bookStoreReducer = (state = initialState, action) => {
         ...state,
         readers: [...state.readers, action.payload],
         lastUpdated: new Date().toISOString(),
+        statistics: calculateStatistics(state.books, [...state.readers, action.payload]),
       };
 
     case READER_REMOVE: {
@@ -120,10 +174,12 @@ const bookStoreReducer = (state = initialState, action) => {
         return state;
       }
 
+      const newReaders = state.readers.filter((reader) => reader.id !== action.payload.readerId);
       return {
         ...state,
-        readers: state.readers.filter((reader) => reader.id !== action.payload.readerId),
+        readers: newReaders,
         lastUpdated: new Date().toISOString(),
+        statistics: calculateStatistics(state.books, newReaders),
       };
     }
 
@@ -135,20 +191,24 @@ const bookStoreReducer = (state = initialState, action) => {
 
       if (!bookToLend || !readerToBorrow || !bookToLend.isAvailable) return state;
 
+      const newBooks = state.books.map((book) =>
+        book.id === bookId ? { ...book, isAvailable: false } : book,
+      );
+      const newReaders = state.readers.map((reader) =>
+        reader.id === readerId
+          ? {
+              ...reader,
+              borrowedBooks: [...reader.borrowedBooks, bookId],
+            }
+          : reader,
+      );
+
       return {
         ...state,
-        books: state.books.map((book) =>
-          book.id === bookId ? { ...book, isAvailable: false } : book,
-        ),
-        readers: state.readers.map((reader) =>
-          reader.id === readerId
-            ? {
-                ...reader,
-                borrowedBooks: [...reader.borrowedBooks, bookId],
-              }
-            : reader,
-        ),
+        books: newBooks,
+        readers: newReaders,
         lastUpdated: new Date().toISOString(),
+        statistics: calculateStatistics(newBooks, newReaders),
       };
     }
 
@@ -161,22 +221,24 @@ const bookStoreReducer = (state = initialState, action) => {
         return state;
       }
 
+      const newBooks = state.books.map((book) =>
+        book.id === bookId ? { ...book, isAvailable: true } : book,
+      );
+      const newReaders = state.readers.map((reader) =>
+        reader.id === readerId
+          ? {
+              ...reader,
+              borrowedBooks: reader.borrowedBooks.filter((id) => id !== bookId),
+            }
+          : reader,
+      );
+
       return {
         ...state,
-        books: state.books.map((book) =>
-          book.id === bookId ? { ...book, isAvailable: true } : book,
-        ),
-
-        readers: state.readers.map((reader) =>
-          reader.id === readerId
-            ? {
-                ...reader,
-                borrowedBooks: reader.borrowedBooks.filter((id) => id !== bookId),
-              }
-            : reader,
-        ),
-
+        books: newBooks,
+        readers: newReaders,
         lastUpdated: new Date().toISOString(),
+        statistics: calculateStatistics(newBooks, newReaders),
       };
     }
 
