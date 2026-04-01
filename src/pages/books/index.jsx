@@ -8,6 +8,7 @@ import LendForm from '../../components/LendForm';
 import ReturnForm from '../../components/ReturnForm';
 import BooksList from '../../components/BooksList';
 import ReadersList from '../../components/ReadersList';
+import Statistics from '../../components/Statistics';
 
 function BooksPage({ books, readers }) {
   const [editingBook, setEditingBook] = useState(null);
@@ -16,6 +17,8 @@ function BooksPage({ books, readers }) {
     <>
       <Meta title="BookStore" />
       <div className="container max-w-5xl prose">
+        <Statistics />
+
         <div className="flex flex-wrap gap-8">
           <div className="flex-1">
             <h3>Добавить книгу</h3>
