@@ -1,4 +1,3 @@
-// src/pages/book-store/index.jsx
 import { connect } from 'react-redux';
 import { useState } from 'react';
 import Meta from '../../components/Meta';
@@ -16,40 +15,34 @@ function BooksPage({ books, readers }) {
   return (
     <>
       <Meta title="BookStore" />
-      <div className="container max-w-5xl prose">
+      <div className="container max-w-6xl mx-auto px-6 py-8">
         <Statistics />
 
-        <div className="flex flex-wrap gap-8">
-          <div className="flex-1">
-            <h3>Добавить книгу</h3>
-            <BookForm editingBook={editingBook} setEditingBook={setEditingBook} />
-          </div>
-          <div className="flex-1">
-            <h3>Добавить читателя</h3>
-            <ReaderForm />
-          </div>
-          <div className="flex-1">
-            <h3>Выдать книгу</h3>
-            <LendForm />
-          </div>
-          <div className="flex-1">
-            <h3>Вернуть книгу</h3>
-            <ReturnForm />
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+          <BookForm editingBook={editingBook} setEditingBook={setEditingBook} />
+          <ReaderForm />
+          <LendForm />
+          <ReturnForm />
         </div>
 
         {books.length !== 0 && (
-          <>
-            <h3>Список книг</h3>
+          <div className="mb-8">
+            <h3 className="text-xl font-semibold text-slate-800 mb-4 flex items-center gap-2">
+              <span className="w-2 h-8 bg-linear-to-b from-violet-500 to-purple-600 rounded-full"></span>
+              Список книг
+            </h3>
             <BooksList onEdit={setEditingBook} />
-          </>
+          </div>
         )}
 
         {readers.length !== 0 && (
-          <>
-            <h3>Список читателей</h3>
+          <div>
+            <h3 className="text-xl font-semibold text-slate-800 mb-4 flex items-center gap-2">
+              <span className="w-2 h-8 bg-linear-to-b from-pink-500 to-rose-600 rounded-full"></span>
+              Список читателей
+            </h3>
             <ReadersList />
-          </>
+          </div>
         )}
       </div>
     </>
